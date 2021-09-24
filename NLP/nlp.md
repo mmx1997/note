@@ -29,7 +29,7 @@ NLP中，最细粒度的是 __词__，词组成 __句子__，句子组成 __段�
 #### Skip-gram
 利用中心词预测上下文，一般为上下两个词。目标函数形式化为 __最大化对数似然函数__:
 $$Aim \ fun=\sum_{w \in C}log \ p(Context(w)|w)$$
-<center><img alt="skip-gram.png" src="skip-gram.png" width="350" height="" ></center>
+<center><img alt="skip-gram.jpeg" src="skip-gram.jpeg" width="300" height="" ></center>
 
 图中 $W_{V*N}$ 即最终需要的整张词表，假设有 $x_i=[0,0,1,...,0]^T
  \in R^{1e5}$, 词表大小为 $W_{1e5*768}$，表示为$1e5$个词，每个词768维向量。$x_i*W_{1e5*768}$就会得到$W$中第2行的向量，用以表征$x_i$，维度从$1e5$下降到768维。
@@ -70,7 +70,7 @@ $$Aim \ fun=\sum_{w \in C}log \ p(Context(w)|w)$$
         * Position-wise feed-forward networks
         提供非线性变换，相当于MLP层
 * Decoder
-  * 输入：$i$时刻的输入为encoder的输出和$i-1$时刻decoder的输出。$0$时刻decoder的输入为句子的开始字符$<s>$。所以中间的attention不是self-attention，它的$K$，$V$来自encoder，$Q$来自上一位置decoder的输出
+  * 输入：$i$时刻的输入为encoder的输出和$i-1$时刻decoder的输出。$0$时刻decoder的输入为句子的开始字符。所以中间的attention不是self-attention，它的$K$，$V$来自encoder，$Q$来自上一位置decoder的输出
   * 输出：对应$i$位置的各词的概率。
   * 解码：训练和预测是不一样的，可参考seq2seq。在训练时，解码是一次全部decode出来，用上一步的ground truth来预测（mask矩阵也会改动，让解码时看不到未来的token）；而预测时，因为没有ground truth了，需要一个个预测。
 
