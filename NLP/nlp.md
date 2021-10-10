@@ -18,6 +18,8 @@ n为特定值时，假设$|V|=2e4$，统计次数为：
 
 ### 2. word2vec
 
+[参考](https://blog.csdn.net/weixin_39895181/article/details/111142955)
+
 NLP中，最细粒度的是 __词__，词组成 __句子__，句子组成 __段落、篇章、文档__。而word2vec就是表征词的技术。
 <font color=#0099ff face="Times new roman"> *__为什么要有Word2vec？？？__*</font>
 利用模型处理需要将文本转换成数值形式，即嵌入到一个数学空间，这种嵌入方式，就叫词嵌入 __word embedding__，而 __*Word2vec*__ 就是词嵌入 __word embedding__ 的一种，是一种无监督预训练方法。
@@ -29,7 +31,7 @@ NLP中，最细粒度的是 __词__，词组成 __句子__，句子组成 __段�
 #### Skip-gram
 利用中心词预测上下文，一般为上下两个词。目标函数形式化为 __最大化对数似然函数__:
 $$Aim \ fun=\sum_{w \in C}log \ p(Context(w)|w)$$
-<center><img alt="skip-gram.jpeg" src="skip-gram.jpeg" width="300" height="" ></center>
+<center><img alt="skip-gram.png" src="skip-gram.png" width="300" height="" ></center>
 
 图中 $W_{V*N}$ 即最终需要的整张词表，假设有 $x_i=[0,0,1,...,0]^T
  \in R^{1e5}$, 词表大小为 $W_{1e5*768}$，表示为$1e5$个词，每个词768维向量。$x_i*W_{1e5*768}$就会得到$W$中第2行的向量，用以表征$x_i$，维度从$1e5$下降到768维。
@@ -92,7 +94,7 @@ _Position Embeddings_ ：位置向量表示
 
 ####  <font color="CornflowerBlue" >不考虑多头的原因，$self \ attention$中词向量不乘$QKV$参数矩阵，会有什么问题？</font>
 $self \ attention$ __核心__ 是 *用文本中的其它词来增强目标词的语义表示，从而更好的利用上下文的信息。*
-计算过程中一般会有 $q=k=v$，相等实际上指来自同一个基础向量。在实际计算时，因为乘了参数矩阵，$q,k,v$一般不相等。
+计算过程中一般会有 $q=k=v$，相等实际上指来自,同一个基础向量。在实际计算时，因为乘了参数矩阵，$q,k,v$一般不相等。
 那如果不乘，每个词对应的$q,k,v$就是完全一样的。相同量级的情况下，$q_i$与$k_i$点积的值会是最大的。在$softmax$后的加权平均中，$w_i$词本身所占的比重将会是最大的，使得其他词的比重很少，无法有效利用上下文信息来增强当前词的语义表示。而乘以参数矩阵后，会使得每个词的$q,k,v$都不一样，能很大程度上减轻上述的影响。
 
 #### <font color="CornflowerBlue">BERT的mask方式？</font>
@@ -139,3 +141,12 @@ $Self \ Attention$时间复杂度:$O(n^2d)$，这里，$n$是序列的长度，$
 代码中将$embedding$的维度做了$transposes$，即$dim=head*per\_head\_dim$，此时的维度为$[batch\_size,\ text\_length,\ \textcolor{red}{head},\ per\_head\_dim]$， 然后$reshapes$，即维度变为$[batch\_size,\ \textcolor{red}{head},\ text\_length,\ per\_head\_dim]$。
 此时单样本的复杂度计算为：
 * 相似度计算：$Q\in R^{head*text\_length*per\_head\_dim}*K^T\in R^{head*per\_head\_dim*text\_length}=O(head*text\_length^2*per\_head\_dim)$，由于$dim=head*per\_head\_dim$，所以复杂度为$O(text\_length^2dim)$，即$O(n^2d)$，后续$softmax$计算与加权平均计算的复杂度同理。最后可得$Multi\ head \ Self \ Attention$复杂度与$Self \ Attention$复杂度一样，都为$O(text\_length^2dim)$，即$O(n^2d)$。
+
+####  <font color="CornflowerBlue">NLP文本表示方法？</font>
+1. One-hot
+2. Bag of Words
+3. Bi-gram和N-gram
+4. TF-IDF
+5. 共现矩阵 Cocurrence matrix
+6. Word2vec/GloVe-静态
+7. bert-动态
